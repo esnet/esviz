@@ -1,1 +1,285 @@
-ESnet Visualization Widgets
+<html>
+  <head>
+    <title>
+    </title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.12/jquery-ui.min.js"></script>
+    <script src="./js/d3.v2.js"> </script>
+    <script src="./js/base.js"></script>
+    <script src="./js/widgetjs.js"> </script>
+    <script src="./js/jquery.tooltip.min.js"></script>
+    
+    <link rel="stylesheet" href="./css/base.css" />
+    
+    <!--[if IE]><link rel="stylesheet" href="./css/ie.css" type="text/css" media="screen, projection" /><![endif]--> 
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/prettify.css" />
+  <script type="text/javascript" src="./js/prettify.js"></script>
+  <script type="text/javascript" src="./js/areachart.js"></script>
+  <script>
+    $(document).ready(function(){
+      //initialize the pretty print
+      prettyPrint();
+      
+      function randomData(data_size, final_time){
+        return d3.range(data_size).map(function(d,i){
+          return {
+            x:final_time - (data_size-i)*30000, //30 sec interval, time in seconds
+            y:Math.random()*1000
+          }
+        })
+      }
+      var ft = new Date().getTime();
+      var size = 201; 
+      var data1 = randomData(size, ft);
+      var data2 = randomData(size, ft);
+      var data3 = randomData(size, ft);
+      var data4 = randomData(size, ft);
+
+
+      ac1 = d3.esnet.areachart()
+        .container("a1")
+        .data([[data1]])
+        .size({w:800, h:100})
+        .margin({top:10, bottom:25, left:20, right:40})
+      
+      ac2 = d3.esnet.areachart().container("a2")
+        .data([[data1, data2]])
+        .size({w:800, h:200})
+        .stacked(true)
+        .margin({top:10, bottom:25, left:20, right:40})
+        
+
+      ac3 = d3.esnet.areachart()
+        .container("a3")
+        .data([[data1], [data2]])
+        .size({w:800, h:100})
+        .margin({top:10, bottom:25, left:20, right:40})
+        
+      
+      ac4 = d3.esnet.areachart()
+        .container("a4")
+        .data([[data1], [data3]])
+        .size({w:800, h:100})
+        .margin({top:10, bottom:25, left:20, right:40})
+        .Tracker()
+        
+      ac5 = d3.esnet.areachart()
+        .container("a5")
+        .data([[data1], [data4]])
+        .size({w:800, h:100})
+        .margin({top:10, bottom:25, left:20, right:40})
+        .Tracker().Zoom()
+      
+        
+        
+        //.Zoom(simultaneous_zoom).Tracker()
+
+
+      $("#resize").click(function(e){
+        e.preventDefault();
+        ac1.stacked(true).margin({bottom:0,right:0})
+        .xAxis(false).yAxis(false)
+      })
+
+      function simultaneous_zoom(domain){
+        if(domain[1]>size){ domain[1]= size;}
+        if(domain[0]<3){domain[0]= 0;}
+        console.log(domain)
+        ac1.update(domain);
+        ac2.update(domain);
+      }
+    }) 
+  </script>
+    </head>
+
+    <body>
+      <div style="width:100%;background:#045a8d;">
+        <div class="top-bar" >
+          <div class="top-links">
+          </div>
+        </div>
+      </div>
+      <!-- {% include 'layouts/header.html'%} -->
+      <div id="wrap">
+        
+        <div id="main">          
+          <div class="body">
+            <div class="container">
+              <hr class="space"/>
+              <hr class="space">
+  <style>
+    pre.prettyprint {border:none;background:#ece7f2;}
+    .demo{background:#d0d1e6;padding:10px;}
+  </style>
+  
+
+  <div class="span-20">
+    <h2>The ESnet Visualization Widgets</h2>
+  </div>
+  <div class="span-3 last">
+      <a href="http://github.com/esnet/esnet_visualizaton_widgets/">Source</a>
+  </div>
+  <div class="span-18">
+    <p>The ESnet Visualization widgets are various data visualization widgets for use in web browsers.  They were developed for use in the MyESnet portal but are general enough to be used other places.  The widgets are built using the d3.js library. 
+    </p>
+
+  </div>
+
+  <div class="span-24">
+    <h3 id="dashboard_name">Areachart widget</h3>
+  </div>
+
+   <div class="span-18">
+    The areagraph widget is a highly customizable javascript widget to visualize time series data in the areachart format.</p>
+    
+    <ul>
+      <li>Visualize multiple layers of areagraph on either side of the X axis.</li>
+      <li>Toggle between stacked vs clustered area chart with a single argument.</li>
+      <li>Easily enable/disable digital zoom.</li>
+      <li>Simultaneous zoom feature incase of multiple widgets on the page.</li>
+      <li>Ability to turn on/off 'on mouse move' tracking easily.</li>
+      <li>Fully customizable dimensions.</li>
+      <li>Total control over visual style using css stylesheets.</li>
+      <li>No coding necessary. Embed the widget on the page with only a single line of code.</li>
+    </ul>
+  </div>
+  
+  <div class="span-24">
+        
+    <pre class="prettyprint sample-data">//Sample time series data used in the widget demos.
+      <code class="language-js">
+        var now = new Date().getTime();
+        var data_size = 201; 
+        var data1 = randomData(data_size, now);
+        var data2 = randomData(data_size, now);
+        var data3 = randomData(data_size, now);
+        var data4 = randomData(data_size, now);
+        
+        //Random time series data generator
+        function randomData(data_size, final_time){
+          return d3.range(data_size).map(function(d,i){
+            return {
+              x:final_time - (data_size-i)*30000, //30 sec interval, time in seconds
+              y:Math.random()*1000
+            }
+          })
+        }
+      </code>
+    </pre>
+    <!-- option 1 -->
+    <div class="demo">
+      <h5>Very simple Areagraph</h5>
+      <p>Single data array</p>
+      <pre class="prettyprint">Code
+        <code class="language-js">
+          d3.esnet.areachart().container("a1")
+            .data([[data1]])
+            .size({w:800, h:100})
+            .margin({top:10, bottom:25, left:20, right:40})
+        </code>
+      </pre>
+      <div id="a1" style="margin:auto;"></div>
+    </div>
+    <hr/>
+    <!-- option 2 -->
+    <div class="demo">
+      <h5> Stacked Areagraph</h5>
+      <p>Two data arrays</p>
+      <pre class="prettyprint">Code
+        <code class="language-js">
+          d3.esnet.areachart().container("a2")
+            .data([[data1, data2]])
+            .size({w:800, h:200})
+            .stacked(true)
+            .margin({top:10, bottom:25, left:20, right:40})
+        </code>
+      </pre>
+      <div id="a2" style="margin:auto;"></div>
+    </div>    
+    <hr/>
+    <!-- option 3 -->
+    <div class="demo">
+      <h5> Symmetrical Areagraphs</h5>
+      <p>Two sets of data arrays</p>
+      <pre class="prettyprint">Code
+        <code class="language-js">
+          d3.esnet.areachart()
+            .container("a3")
+            .data([[data1], [data2]])
+            .size({w:800, h:100})
+            .margin({top:10, bottom:25, left:20, right:40})
+        </code>
+      </pre>
+      <div id="a3" style="margin:auto;"></div>
+    </div>
+    <hr/>
+    <!-- option 4 -->
+    <div class="demo">
+      <h5>Areagraphs with live tracking</h5>
+      <p>Displays the value at a time stamp on mouse move</p>
+      <pre class="prettyprint">Code
+        <code class="language-js">
+          d3.esnet.areachart()
+            .container("a3")
+            .data([[data1], [data3]])
+            .size({w:800, h:100})
+            .margin({top:10, bottom:25, left:20, right:40})
+            .Tracker()
+        </code>
+      </pre>
+      <div id="a4" style="margin:auto;"></div>
+    </div>    
+    <hr/>
+    <!-- option 4 -->
+    <div class="demo">
+      <h5>Areagraphs with Digital Zoom</h5>
+      <p>Zoom in using double click.</p>
+      <pre class="prettyprint">Code
+        <code class="language-js">
+          d3.esnet.areachart()
+            .container("a3")
+            .data([[data1], [data3]])
+            .size({w:800, h:100})
+            .margin({top:10, bottom:25, left:20, right:40})
+            .Tracker().Zoom()
+        </code>
+      </pre>
+      <div id="a5" style="margin:auto;"></div>
+    </div>    
+    
+    
+    
+    
+    
+    
+  </div>
+  
+              <hr class="space"/>
+              <hr class="space">
+            </div>
+          </div>          
+        </div>
+        
+      </div>
+      
+<div id="footer">
+  <div class="footer-content">      
+    <div class="logos">
+      <span class="dept-logo"> <a href="http://www.es.net/"><img src="./images/esnet-logo.jpg"/></a> </span>
+      <span class="dept-logo"> <a href="http://www.lbl.gov"><img src="./images/berkeley-lab-logo.jpg"/></a> </span>
+      <span class="dept-logo"> <a href="http://science.energy.gov/"><img src="./images/doe-logo.png"/></a> </span>
+    </div>
+
+    <div class="footer-links">
+    </div>
+  </div>
+  <div class="feedback-msg">
+    <span>
+      We welcome your feedback. Please send email to <a href="mailto:tools@es.net">tools@es.net</a>
+    </span> 
+  </div>
+</div>
+      <!-- Footer -->
+    </body>
+  </html>
